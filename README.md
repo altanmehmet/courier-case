@@ -12,22 +12,37 @@ mvn spring-boot:run
 ```
 
 ## API
-### Ingest location
+### Ingest location (POST)
 ```bash
 curl -X POST http://localhost:8080/locations \
   -H 'Content-Type: application/json' \
   -d '{"courierId":"courier-1","timeMillis":1723900000000,"lat":40.9923307,"lng":29.1244229}'
 ```
+- Request body:
+  - `courierId` (string, required, not blank)
+  - `timeMillis` (number, required, >= 1, epoch millis)
+  - `lat` (double, -90..90), `lng` (double, -180..180)
+- Responses: `202 Accepted` on success; `400` with validation errors; `401/403` if JWT security is enabled and missing/invalid token.
 
-### Get total distance (meters)
+### Get total distance (GET)
 ```bash
 curl http://localhost:8080/couriers/courier-1/distance
 ```
+- Response example:
+  ```json
+  {"courierId":"courier-1","totalDistanceMeters":123.45}
+  ```
 
-### Get store entries
+### Get store entries (GET)
 ```bash
 curl 'http://localhost:8080/entries?courierId=courier-1'
 ```
+- Response example:
+  ```json
+  [
+    {"courierId":"courier-1","storeName":"Test Store","timeMillis":1723900000000}
+  ]
+  ```
 
 ## Notes
 - Time format is epoch millis.
