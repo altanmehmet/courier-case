@@ -39,16 +39,18 @@ curl 'http://localhost:8080/entries?courierId=courier-1'
 mvn test
 ```
 
-## Güvenlik (JWT)
-- Varsayılan: **kapalı** (`security.enabled=false`), tüm endpoint’ler açık.
-- Açmak için `application.properties` veya argümanla:
+## Security (JWT)
+- Default: **disabled** (`security.enabled=false`), all endpoints are open.
+- To enable it via `application.properties` or arguments:
   ```
   security.enabled=true
   security.hmac-secret=please-change-me-32chars-placeholder
   ```
-  Ardından tüm API çağrılarında `Authorization: Bearer <jwt>` gönderin (HS256, `sub` ve `exp` içeren token).
-  - **Demo/Test için jwt oluşturma** (aynı `security.hmac-secret` ile):
-  - `jwt.io` üzerinde:
+  Then send `Authorization: Bearer <jwt>` on every API call (HS256, with `sub` and `exp` claims).
+- The value `please-change-me-32chars-placeholder` is a **demo placeholder** committed only for local testing and the case review.  
+  In a real deployment this secret must come from environment/secret management and **never** be committed to version control.
+- **Demo/Test token generation** (using the same `security.hmac-secret`):
+  - On `jwt.io`:
     - Header: `{"alg":"HS256","typ":"JWT"}`
-    - Payload: `{"sub":"test-user","exp": <gelecek unix epoch saniye>}`
+    - Payload: `{"sub":"test-user","exp": <future unix epoch seconds>}`
     - Secret: `please-change-me-32chars-placeholder`
