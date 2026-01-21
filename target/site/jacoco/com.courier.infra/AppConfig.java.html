@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">courier-tracking</a> &gt; <a href="index.source.html" class="el_package">com.courier.infra</a> &gt; <span class="el_source">AppConfig.java</span></div><h1>AppConfig.java</h1><pre class="source lang-java linenums">package com.courier.infra;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.courier.application.CourierStateRepository;
+import com.courier.application.CourierTrackingService;
+import com.courier.application.DistanceAccumulatorListener;
+import com.courier.application.EntryLogRepository;
+import com.courier.application.LocationEventBus;
+import com.courier.application.LocationListener;
+import com.courier.application.StoreEntryConfig;
+import com.courier.application.StoreEntryListener;
+import com.courier.application.StoreRepository;
+import com.courier.domain.DistanceCalculator;
+import com.courier.domain.HaversineDistanceCalculator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import io.micrometer.core.instrument.MeterRegistry;
+
+import java.util.List;
+
+@Configuration
+@EnableConfigurationProperties({StoreEntryProperties.class, SecurityProperties.class})
+<span class="fc" id="L24">public class AppConfig {</span>
+    @Bean
+    public DistanceCalculator distanceCalculator() {
+<span class="fc" id="L27">        return new HaversineDistanceCalculator();</span>
+    }
+
+    @Bean
+    public StoreRepository storeRepository(ObjectMapper objectMapper) {
+<span class="fc" id="L32">        return new JsonStoreRepository(objectMapper, &quot;stores.json&quot;);</span>
+    }
+
+    @Bean
+    public MetricsRecorder metricsRecorder(MeterRegistry meterRegistry) {
+<span class="fc" id="L37">        return new MetricsRecorder(meterRegistry);</span>
+    }
+
+    @Bean
+    public CourierStateRepository courierStateRepository() {
+<span class="fc" id="L42">        return new InMemoryCourierStateRepository();</span>
+    }
+
+    @Bean
+    public EntryLogRepository entryLogRepository() {
+<span class="fc" id="L47">        return new InMemoryEntryLogRepository();</span>
+    }
+
+    @Bean
+    public DistanceAccumulatorListener distanceAccumulatorListener(DistanceCalculator distanceCalculator, MetricsRecorder metricsRecorder) {
+<span class="fc" id="L52">        return new DistanceAccumulatorListener(distanceCalculator, metricsRecorder);</span>
+    }
+
+    @Bean
+    public StoreEntryListener storeEntryListener(
+            StoreRepository storeRepository,
+            EntryLogRepository entryLogRepository,
+            DistanceCalculator distanceCalculator,
+            StoreEntryProperties storeEntryProperties,
+            MetricsRecorder metricsRecorder
+    ) {
+<span class="fc" id="L63">        StoreEntryConfig config = new StoreEntryConfig(</span>
+<span class="fc" id="L64">                storeEntryProperties.getRadiusMeters(),</span>
+<span class="fc" id="L65">                storeEntryProperties.getCooldownMillis()</span>
+        );
+<span class="fc" id="L67">        return new StoreEntryListener(storeRepository, entryLogRepository, distanceCalculator, config, metricsRecorder);</span>
+    }
+
+    @Bean
+    public LocationEventBus locationEventBus(List&lt;LocationListener&gt; listeners) {
+<span class="fc" id="L72">        LocationEventBus eventBus = new LocationEventBus();</span>
+<span class="fc" id="L73">        listeners.forEach(eventBus::register);</span>
+<span class="fc" id="L74">        return eventBus;</span>
+    }
+
+    @Bean
+    public CourierTrackingService courierTrackingService(
+            CourierStateRepository courierStateRepository,
+            EntryLogRepository entryLogRepository,
+            LocationEventBus eventBus,
+            MetricsRecorder metricsRecorder
+    ) {
+<span class="fc" id="L84">        return new CourierTrackingService(courierStateRepository, entryLogRepository, eventBus, metricsRecorder);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

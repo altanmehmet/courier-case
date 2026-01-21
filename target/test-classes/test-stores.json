@@ -1,0 +1,7 @@
+[
+  { "id": "", "name": "Çığ Köfte 123", "lat": 40.0, "lng": 29.0 },
+  { "name": "  ---  ", "lat": 41.0, "lng": 30.0 },
+  { "id": "explicit-id", "name": "Ignored Name", "lat": 42.0, "lng": 31.0 },
+  { "id": "   ", "name": null, "lat": 43.0, "lng": 32.0 }
+]
+

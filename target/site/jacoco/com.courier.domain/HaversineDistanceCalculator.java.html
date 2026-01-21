@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HaversineDistanceCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">courier-tracking</a> &gt; <a href="index.source.html" class="el_package">com.courier.domain</a> &gt; <span class="el_source">HaversineDistanceCalculator.java</span></div><h1>HaversineDistanceCalculator.java</h1><pre class="source lang-java linenums">package com.courier.domain;
+
+<span class="fc" id="L3">public class HaversineDistanceCalculator implements DistanceCalculator {</span>
+    private static final double EARTH_RADIUS_M = 6371000.0;
+
+    @Override
+    public double distanceMeters(Location from, Location to) {
+<span class="fc" id="L8">        double lat1 = Math.toRadians(from.lat());</span>
+<span class="fc" id="L9">        double lat2 = Math.toRadians(to.lat());</span>
+<span class="fc" id="L10">        double deltaLat = Math.toRadians(to.lat() - from.lat());</span>
+<span class="fc" id="L11">        double deltaLng = Math.toRadians(to.lng() - from.lng());</span>
+
+<span class="fc" id="L13">        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)</span>
+<span class="fc" id="L14">                + Math.cos(lat1) * Math.cos(lat2)</span>
+<span class="fc" id="L15">                * Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);</span>
+<span class="fc" id="L16">        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));</span>
+<span class="fc" id="L17">        return EARTH_RADIUS_M * c;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
